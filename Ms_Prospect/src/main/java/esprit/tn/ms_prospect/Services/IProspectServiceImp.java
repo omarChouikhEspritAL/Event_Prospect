@@ -2,6 +2,7 @@ package esprit.tn.ms_prospect.Services;
 
 import esprit.tn.ms_prospect.Dto.ProspectDto;
 import esprit.tn.ms_prospect.Entities.Prospect;
+import esprit.tn.ms_prospect.Kafka.KafkaProducerService;
 import esprit.tn.ms_prospect.Mappers.ProspectMapper;
 import esprit.tn.ms_prospect.Repositories.ProspectRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +21,18 @@ import java.util.Map;
 public class IProspectServiceImp implements IProspectService{
     private final ProspectRepository prospectRepository;
     private final ProspectMapper prospectMapper;
+    private final KafkaProducerService kafkaProducerService;
 
     @Override
     public ProspectDto add(ProspectDto prospectDto) {
         Prospect prospect = prospectMapper.mapToEntity(prospectDto);
         prospect.setCreatedAt(LocalDateTime.now());
-        return prospectMapper.mapToDto(prospectRepository.save(prospect));
+        Prospect saved = prospectRepository.save(prospect);
+
+        // Envoi vers Kafka après insertion
+        kafkaProducerService.sendMessage("event-topic", "New prospect created: " + saved.getId());
+
+        return prospectMapper.mapToDto(prospectRepository.save(saved));
     }
 
     @Override

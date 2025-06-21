@@ -6,6 +6,8 @@
       <list>
         <option value="$PROJECT_DIR$/Ms_Event/pom.xml" />
         <option value="$PROJECT_DIR$/Ms_Prospect/pom.xml" />
+        <option value="$PROJECT_DIR$/Eureka Server/pom.xml" />
+        <option value="$PROJECT_DIR$/Config Server/pom.xml" />
       </list>
     </option>
     <option name="workspaceImportForciblyTurnedOn" value="true" />

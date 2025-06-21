@@ -25,5 +25,6 @@ public class Prospect implements Serializable {
     String filedWork;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
+    String idEvent;
 
 }

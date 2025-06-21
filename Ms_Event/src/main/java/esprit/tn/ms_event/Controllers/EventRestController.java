@@ -31,7 +31,9 @@ public class EventRestController {
 
 
     @GetMapping
-    public Page<EventDto> getEvents(int pageNbr, int pageSize){
+    public Page<EventDto> getEvents(@RequestParam(required = true) int pageNbr,
+                                    @RequestParam(required = true) int pageSize){
+
         return eventService.getEvents(pageNbr,pageSize);
     }
 
