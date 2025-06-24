@@ -41,6 +41,13 @@ services:
     networks:
       - microservices-network
 
+  zipkin:
+    image: openzipkin/zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - microservices-network
+
   # Eureka Server
 #  eureka-server:
 #    build: ./EurekaServer
@@ -152,20 +159,20 @@ services:
 #      - microservices-network
 
   # Keycloak
-#  keycloak:
-#    image: quay.io/keycloak/keycloak:latest
-#    ports:
-#      - "8180:8080"
-#    environment:
-#      - KEYCLOAK_ADMIN=admin
-#      - KEYCLOAK_ADMIN_PASSWORD=admin
-#    volumes:
-#      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm.json
-#    command:
-#      - start-dev
-#      - --import-realm
-#    networks:
-#      - microservices-network
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    ports:
+      - "8180:8080"
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    volumes:
+      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm.json
+    command:
+      - start-dev
+      - --import-realm
+    networks:
+      - microservices-network
 
 volumes:
   mysql_data:
