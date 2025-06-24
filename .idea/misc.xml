@@ -8,6 +8,10 @@
         <option value="$PROJECT_DIR$/Ms_Prospect/pom.xml" />
         <option value="$PROJECT_DIR$/Eureka Server/pom.xml" />
         <option value="$PROJECT_DIR$/Config Server/pom.xml" />
+        <option value="$PROJECT_DIR$/Api Gateway/pom.xml" />
+        <option value="$PROJECT_DIR$/EurekaServer/pom.xml" />
+        <option value="$PROJECT_DIR$/ConfigServer/pom.xml" />
+        <option value="$PROJECT_DIR$/ApiGateway/pom.xml" />
       </list>
     </option>
     <option name="workspaceImportForciblyTurnedOn" value="true" />

@@ -1,4 +1,5 @@
 services:
+  # Zookeeper pour Kafka
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.2
     hostname: zookeeper
@@ -9,7 +10,10 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_SERVER_ID: 1
       ZOOKEEPER_SERVERS: zookeeper:2888:3888
+    networks:
+      - microservices-network
 
+  # Kafka
   kafka:
     image: confluentinc/cp-kafka:7.3.2
     hostname: kafka
@@ -34,67 +38,138 @@ services:
       KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
     depends_on:
       - zookeeper
-
-
-  config-server:
-    build: ./config-server
-    ports:
-      - "8889:8889"
-    environment:
-      - SPRING_APPLICATION_NAME=config-server
-      - SERVER_PORT=8889
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
-    depends_on:
-      - eureka-server
     networks:
       - microservices-network
 
-  eureka-server:
-    build: ./eureka-server
+  # Eureka Server
+#  eureka-server:
+#    build: ./EurekaServer
+#    ports:
+#      - "8761:8761"
+#    environment:
+#      - SPRING_APPLICATION_NAME=eureka-server
+#      - SERVER_PORT=8761
+#    networks:
+#      - microservices-network
+#
+#  # Spring Cloud Config Server
+#  config-server:
+#    build: ./ConfigServer
+#    ports:
+#      - "8889:8889"
+#    environment:
+#      - SPRING_APPLICATION_NAME=config-server
+#      - SERVER_PORT=8889
+#      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+#    depends_on:
+#      - eureka-server
+#    networks:
+#      - microservices-network
+#
+#  # API Gateway
+#  api-gateway:
+#    build: ./ApiGateway
+#    ports:
+#      - "8081:8081"
+#    environment:
+#      - SPRING_APPLICATION_NAME=api-gateway
+#      - SERVER_PORT=8081
+#      - SPRING_PROFILES_ACTIVE=dev
+#      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8889
+#      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+##      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://keycloak:8080/realms/your-realm
+#    depends_on:
+#      - eureka-server
+#      - config-server
+##      - keycloak
+#    networks:
+#      - microservices-network
+#
+#  # Microservice ms-event (MySQL)
+#  ms-event:
+#    build: ./Ms_Event
+#    ports:
+#      - "8080:8080"
+#    environment:
+#      - SPRING_APPLICATION_NAME=ms_event
+#      - SERVER_PORT=8080
+#      - SPRING_PROFILES_ACTIVE=dev
+#      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8889
+#      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+#      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+#      - SPRING_DATASOURCE_USERNAME=root
+#      - SPRING_DATASOURCE_PASSWORD=password
+#    depends_on:
+#      - eureka-server
+#      - config-server
+#      - kafka
+#      - mysql
+#    networks:
+#      - microservices-network
+#
+#  # Microservice ms-prospect (MongoDB)
+#  ms-prospect:
+#    build: ./Ms_Prospect
+#    ports:
+#      - "9090:9090"
+#    environment:
+#      - SPRING_APPLICATION_NAME=ms_prospect
+#      - SERVER_PORT=9090
+#      - SPRING_PROFILES_ACTIVE=dev
+#      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8889
+#      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+#      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+#      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/prospectdb
+#    depends_on:
+#      - eureka-server
+#      - config-server
+#      - kafka
+#      - mongodb
+#    networks:
+#      - microservices-network
+#
+#  # MongoDB
+#  mongodb:
+#    image: mongo:latest
+#    ports:
+#      - "27017:27017"
+#    volumes:
+#      - mongodb_data:/data/db
+#    networks:
+#      - microservices-network
+#
+#  # MySQL
+#  mysql:
+#    image: mysql:8.0
+#    ports:
+#      - "3306:3306"
+#    environment:
+#      - MYSQL_ROOT_PASSWORD=
+#      - MYSQL_DATABASE=eventdb
+#    volumes:
+#      - mysql_data:/var/lib/mysql
+#    networks:
+#      - microservices-network
 
-    ports:
-      - "8761:8761"
-    environment:
-      - SPRING_APPLICATION_NAME=eureka-server
-      - SERVER_PORT=8761
-    networks:
-      - microservices-network
+  # Keycloak
+#  keycloak:
+#    image: quay.io/keycloak/keycloak:latest
+#    ports:
+#      - "8180:8080"
+#    environment:
+#      - KEYCLOAK_ADMIN=admin
+#      - KEYCLOAK_ADMIN_PASSWORD=admin
+#    volumes:
+#      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm.json
+#    command:
+#      - start-dev
+#      - --import-realm
+#    networks:
+#      - microservices-network
 
-  ms-event:
-    build: ./ms_event
-    ports:
-      - "8080:8080"
-    environment:
-      - SPRING_APPLICATION_NAME=ms_event
-      - SERVER_PORT=8080
-      - SPRING_PROFILES_ACTIVE=dev
-      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8889
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
-    depends_on:
-      - eureka-server
-      - config-server
-      - kafka
-    networks:
-      - microservices-network
-
-  ms-prospect:
-    build: ./ms_prospect
-    ports:
-      - "9090:9090"
-    environment:
-      - SPRING_APPLICATION_NAME=ms_prospect
-      - SERVER_PORT=9090
-      - SPRING_PROFILES_ACTIVE=dev
-      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8889
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
-    depends_on:
-      - eureka-server
-      - config-server
-      - kafka
-    networks:
-      - microservices-network
+volumes:
+  mysql_data:
+  mongodb_data:
 
 networks:
   microservices-network:
